@@ -4,13 +4,19 @@ from utils import mean_variance_norm, DEVICE
 from utils import calc_ss_loss, calc_remd_loss, calc_moment_loss, calc_mse_loss, calc_histogram_loss
 from hist_loss import RGBuvHistBlock
 import torch
+from pathlib import Path
 
 class Net(nn.Module):
     def __init__(self, args):
         super(Net, self).__init__()
+
+        ckpt_path = args.ckpt_path if args.ckpt_path is not None else "./checkpoints/"
+
+        ckpt_path = Path(ckpt_path)
+
         self.args = args
         self.vgg = vgg19[:44]
-        self.vgg.load_state_dict(torch.load('./checkpoints/encoder.pth', map_location='cpu'), strict=False)
+        self.vgg.load_state_dict(torch.load(ckpt_path/'encoder.pth', map_location='cpu'), strict=False)
         for param in self.vgg.parameters():
             param.requires_grad = False
 
@@ -26,10 +32,10 @@ class Net(nn.Module):
                                    device=device)
 
         if args.pretrained == True:
-            self.align1.load_state_dict(torch.load('./checkpoints/PAMA1.pth', map_location='cpu'), strict=True)
-            self.align2.load_state_dict(torch.load('./checkpoints/PAMA2.pth', map_location='cpu'), strict=True)
-            self.align3.load_state_dict(torch.load('./checkpoints/PAMA3.pth', map_location='cpu'), strict=True)
-            self.decoder.load_state_dict(torch.load('./checkpoints/decoder.pth', map_location='cpu'), strict=False)
+            self.align1.load_state_dict(torch.load(ckpt_path/'PAMA1.pth', map_location='cpu'), strict=True)
+            self.align2.load_state_dict(torch.load(ckpt_path/'PAMA2.pth', map_location='cpu'), strict=True)
+            self.align3.load_state_dict(torch.load(ckpt_path/'PAMA3.pth', map_location='cpu'), strict=True)
+            self.decoder.load_state_dict(torch.load(ckpt_path/'decoder.pth', map_location='cpu'), strict=False)
 
         if args.requires_grad == False:
             for param in self.parameters():

@@ -154,6 +154,8 @@ def main():
                                   help="size of the output image")
     eval_parser.add_argument("--device", type=str, default="cuda",
                                   help="device for running the model, 'cuda' or 'cpu'")
+    eval_parser.add_argument("--ckpt_path", type=str, default=None,
+                                  help="path to the model checkpoints")
 
     args = main_parser.parse_args()
 
