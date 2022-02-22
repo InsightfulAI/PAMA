@@ -45,9 +45,9 @@ def train_transform():
     ]
     return transforms.Compose(transform_list)
 
-def test_transform():
+def test_transform(image_size=512):
     transform_list = []
-    transform_list.append(transforms.Resize(size=(512)))
+    transform_list.append(transforms.Resize(size=(image_size)))
     transform_list.append(transforms.ToTensor())
     transform = transforms.Compose(transform_list)
     return transform

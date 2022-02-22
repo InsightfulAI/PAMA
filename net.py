@@ -19,10 +19,11 @@ class Net(nn.Module):
         self.align3 = PAMA(512)
 
         self.decoder = decoder
+        device = args.device if args.device is not None else DEVICE
         self.hist = RGBuvHistBlock(insz=64, h=256, 
                                    intensity_scale=True, 
                                    method='inverse-quadratic',
-                                   device=DEVICE)
+                                   device=device)
 
         if args.pretrained == True:
             self.align1.load_state_dict(torch.load('./checkpoints/PAMA1.pth', map_location='cpu'), strict=True)

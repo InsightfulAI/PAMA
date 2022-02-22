@@ -69,9 +69,10 @@ def eval(args):
     logging.info(mes)
     model = Net(args)
     model.eval()
-    model = model.to(DEVICE)
+    device = args.device
+    model = model.to(device)
     
-    tf = test_transform()
+    tf = test_transform(args.image_size)
     if args.run_folder == True:
         content_dir = args.content 
         style_dir = args.style
@@ -79,8 +80,8 @@ def eval(args):
             for style in os.listdir(style_dir):
                 name_c = content_dir + content
                 name_s = style_dir + style
-                Ic = tf(Image.open(name_c)).to(DEVICE)
-                Is = tf(Image.open(name_s)).to(DEVICE)
+                Ic = tf(Image.open(name_c)).to(device)
+                Is = tf(Image.open(name_s)).to(device)
                 Ic = Ic.unsqueeze(dim=0)
                 Is = Is.unsqueeze(dim=0)
                 with torch.no_grad():
@@ -89,8 +90,8 @@ def eval(args):
                 name_cs = "ics/" + os.path.splitext(content)[0]+"--"+style 
                 save_image(Ics[0], name_cs)
     else:
-        Ic = tf(Image.open(args.content)).to(DEVICE)
-        Is = tf(Image.open(args.style)).to(DEVICE)
+        Ic = tf(Image.open(args.content)).to(device)
+        Is = tf(Image.open(args.style)).to(device)
 
         Ic = Ic.unsqueeze(dim=0)
         Is = Is.unsqueeze(dim=0)
@@ -149,6 +150,10 @@ def main():
                                   help="content image you want to stylize")
     eval_parser.add_argument("--style", type=str, default="./style/",
                                   help="style image for stylization")
+    eval_parser.add_argument("--image_size", type=int, default=512,
+                                  help="size of the output image")
+    eval_parser.add_argument("--device", type=str, default="cuda",
+                                  help="device for running the model, 'cuda' or 'cpu'")
 
     args = main_parser.parse_args()
 
